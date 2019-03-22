@@ -1,0 +1,24 @@
+"""
+word批量转pdf
+"""
+import os
+from win32com.client import Dispatch, constants, gencache
+
+def word2pdf(wordFile, pdfFile):
+	word = gencache.EnsureDispatch('Word.Application')
+	doc = word.Documents.Open(wordFile, ReadOnly=1)
+	doc.ExportAsFixedFormat(pdfFile,
+		constants.wdExportFormatPDF,
+		Item=constants.wdExportDocumentWithMarkup,
+		CreateBookmarks=constants.wdExportCreateHeadingBookmarks)
+	word.Quit(constants.wdDoNotSaveChanges)
+
+
+wordFiles = [fn for fn  in os.listdir('.') if fn.endswith(('.doc','.docx'))]
+
+for wordFile in wordFiles:
+	wordFile = os.path.abspath(wordFile)
+	index = wordFile.rindex('.')
+	pdfFile = wordFile[:index] + '.pdf'
+	print(pdfFile)
+	word2pdf(wordFile, pdfFile)
